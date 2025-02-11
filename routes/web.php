@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
@@ -11,6 +12,7 @@ Route::get('/', function () {
 });
 
 Route::resource('/backend/users', UserController::class); //geeft toegang tot alle 7 functies in UserController
+Route::resource('/backend/posts', PostController::class); //geeft toegang tot alle 7 functies in UserController
 
 Route::get('/dashboard', function () {
     return view('backend.dashboard');
