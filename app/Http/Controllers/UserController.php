@@ -2,22 +2,87 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\Photo;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    //moet erbij om authorize te doen werken
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
+    protected $folder = 'users';
+
     public function index()
     {
+        //policy bijzetten
+        $this->authorize('ViewAdminPanel', User::class);
+
+        $search = request('search'); // Zoekterm ophalen uit de request
+
         //de homepagina van mijn users
-        $users = User::all();
-        $roles = Role::all();
+        $users = User::withTrashed()->with(['roles', 'photo'])
+            ->filter($search)
+            ->sortable() // Voeg deze regel toe voor sorteerfunctionaliteit
+            ->orderBy('id', 'desc')
+            ->paginate(7)
+            ->appends(request()->query()); // Houd de query-parameters in de paginatie-URL bij
+
         //return view('backend.users.index', ['users' => $users, 'roles' => $roles]);
-        return view('backend.users.index', compact('users', 'roles'));
+        return view('backend.users.index', compact('users'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreUserRequest $request)
+    {
+        // Validatieberichten
+        $validatedData = $request->validated();
+
+        //password hashen
+        $validatedDate['password'] = Hash::make($validatedData['password']);
+
+
+        //controlleer of er een foto is geüpload en sla deze op
+        if ($request->hasFile('photo_id')) {
+            $file = $request->file('photo_id');
+            $uniqueName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $filePath = $this->folder . '/' . $uniqueName;
+
+            //opslaan in het public path onder users
+            $file->storeAs('', $filePath, 'public');
+            $photo = Photo::create([
+                'path' => $filePath,
+                'alternate_text' => $validatedDate['name'],
+            ]);
+            $validatedDate['photo_id'] = $photo->id;
+        }
+
+        //gebruiker aanmaken
+        $user = User::create([
+            'name' => $validatedDate['name'],
+            'email' => $validatedDate['email'],
+            'is_active' => $validatedDate['is_active'],
+            'password' => bcrypt($validatedDate['password']),
+            'photo_id' => $validatedDate['photo_id'],
+        ]);
+        //array van rollen wegschrijven naar de role_user tussentabel
+        //sync doet een detach en daarna een attach in 1 keer
+        $user->roles()->sync($validatedDate['role_id']);
+
+        //redirect naar users
+        //with('message) zet in de session en maakt succes alert als de form gesubmit is
+        return redirect()->route('users.index')->with('message', 'User created successfully.');
     }
 
     /**
@@ -25,16 +90,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //wegschrijven van de nieuwe user
+        $roles = Role::pluck('name', 'id')->all();
+        //in mijn backend heb ik users.create
+        return view('backend.users.create', compact('roles'));
     }
 
     /**
@@ -48,24 +106,101 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //weergave van 1 enkele user met de waarden opgehaald uit de database
+        $user = User::with('roles', 'photo')->findOrFail($id);
+        $roles = Role::pluck('name', 'id')->all();
+        $photoDetails = ['exists' => false, 'filesize' => 0, 'width' => 'N/A', 'height' => 'N/A', 'extension' => ''];    // Controleer of er een foto is en of deze bestaat op de 'public' disk
+        if ($user->photo && Storage::disk('public')->exists($user->photo->path)) {
+            $photoDetails['exists'] = true;
+            $photoDetails['filesize'] = round(Storage::disk('public')->size($user->photo->path) / 1024, 2);
+            $photoPath = Storage::disk('public')->path($user->photo->path);
+            $dimensions = getimagesize($photoPath);
+            $photoDetails['width'] = $dimensions[0] ?? 'N/A';
+            $photoDetails['height'] = $dimensions[1] ?? 'N/A';
+            $photoDetails['extension'] = Str::upper(pathinfo($user->photo->path, PATHINFO_EXTENSION));
+        }
+        return view('backend.users.edit', compact('user', 'roles', 'photoDetails'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
-        //is het overschrijven van de gewijzigde waarden uit de function edit.
+        // Haal de gebruiker op of geef een 404 als deze niet bestaat
+        $user = User::findOrFail($id);
+
+        // Validatieberichten
+        $validatedData = $request->validated();
+
+        // Verwerk het wachtwoord: als er een nieuw wachtwoord is ingevuld, hash deze; anders laat je de oude waarde intact.
+        if (!empty($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']);
+        }
+        // Verwerk de foto: als er een nieuwe foto is geüpload
+        if ($request->hasFile('photo_id')) {
+            $file = $request->file('photo_id');
+            // Genereer een unieke bestandsnaam met behulp van een UUID
+            $uniqueName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            // Gebruik de class-property (bijv. 'users') en bouw het bestandspad op als 'users/uniquename.ext'
+            $filePath = $this->folder . '/' . $uniqueName;
+            // Sla het bestand op in de 'public'-disk (die verwijst naar storage/app/public)
+            $file->storeAs('', $filePath, 'public');
+            // Controleer of de gebruiker al een foto-record heeft
+            if ($user->photo && Storage::disk('public')->exists($user->photo->path)) {
+                // Verwijder de oude fysieke foto
+                Storage::disk('public')->delete($user->photo->path);
+                // Update het bestaande Photo-record met de nieuwe bestandsnaam en alternate text
+                $user->photo->update([
+                    'path'          => $filePath,
+                    'alternate_text' => $validatedData['name']
+                ]);
+                // Gebruik hetzelfde photo record id
+                $validatedData['photo_id'] = $user->photo->id;
+            } else {
+                // Als er nog geen foto-record is, maak er dan een nieuw aan
+                $photo = Photo::create([
+                    'path'          => $filePath,
+                    'alternate_text' => $validatedData['name']
+                ]);
+                $validatedData['photo_id'] = $photo->id;
+            }
+        }
+        // Werk de gebruiker bij met de gevalideerde data
+        $user->update($validatedData);
+        // Synchroniseer de rollen voor de gebruiker
+        $user->roles()->sync($validatedData['role_id']);
+        return redirect()->back()->with('message', 'User updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    function destroy(string $id)
     {
         //delete van een user
+        $user = User::with('photo')->findOrFail($id);
+
+        //controleer of het fysieke bestand bestaat
+        if(Storage::disk('public')->exists($user->photo->path)){
+            Storage::disk('public')->delete($user->photo->path);
+        }
+        //verwijder uit de database
+        /*$user->photo->delete();*/
+
+        $user->delete();
+        //redirect
+        //redirect naar users
+        return redirect()->route('users.index')->with('message', 'User deleted successfully!');
+    }
+
+    public function restore(string $id){
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+        return redirect()->back()->with('message', 'User restored successfully!');
     }
 }

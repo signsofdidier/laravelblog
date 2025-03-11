@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Photo;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,10 +20,19 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'name' => 'Didier',
             'is_active' => 1,
-            'role_id' => 1,
             'email_verified_at' => now(),
             'email' => 'didier.v@hotmail.com',
-            'photo_id' => 1,
+            'photo_id' => Photo::inRandomOrder()->first()->id,
+            'password' => Hash::make('12345678'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('users')->insert([
+            'name' => 'Tim',
+            'is_active' => 1,
+            'email_verified_at' => now(),
+            'email' => 'tim@gmail.com',
+            'photo_id' => Photo::inRandomOrder()->first()->id,
             'password' => Hash::make('12345678'),
             'created_at' => now(),
             'updated_at' => now(),

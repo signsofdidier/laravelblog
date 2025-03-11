@@ -8,6 +8,9 @@
     <title>Laravel</title>
 </head>
 <body>
-    <h1>Hello Laravel!</h1>
+    <h1>Hello Laravel Frontend!</h1>
+    @can('ViewAdminPanel', App\Models\User::class)
+        <a href="{{ route('backend.index') }}">Admin Dashboard</a>
+    @endcan
 </body>
 </html>
