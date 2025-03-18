@@ -21,8 +21,34 @@ class GlobalDataServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      */
+
     public function boot(): void
     {
+        // View Composer alleen voor admin-gerelateerde views
+        View::composer(['backend.*'], function ($view) {
+            $cacheKey = 'global_data';
+            // Check of de cache bestaat, anders haal nieuwe data op
+            $cacheData = Cache::remember($cacheKey, now()->addMinutes(10), function () {
+                return [
+                    'totalUsers'    => User::count(),
+                    'activeUsers'   => User::where('is_active', 1)->count(),
+                    'inactiveUsers' => User::where('is_active', 0)->count(),
+                    'totalPosts'    => Post::count(),
+                    'publishedPosts' => Post::where('is_published', 1)->count(),
+                    'unpublishedPosts' => Post::where('is_published', 0)->count(),
+                ];
+            });
+            $view->with($cacheData);
+        });
+        // Cache vernieuwen bij wijzigingen in User of Post model of andere toekomstige modellen.
+        foreach ([Post::class, User::class] as $model) {
+            $model::saved(fn() => Cache::forget('global_data'));
+            $model::deleted(fn() => Cache::forget('global_data'));
+        }
+    }
+
+    /*public function boot(): void
+    {  //oude code
         // onderstaande varabelen wil ik als global VIEW overal kunnen tonen
         View::composer('*', function($view) {
             $totalUsers = Cache::remember('totalUsers', 600, fn() => User::count());
@@ -38,8 +64,5 @@ class GlobalDataServiceProvider extends ServiceProvider
                 'totalUsers', 'activeUsers', 'inactiveUsers', 'totalPosts', 'publishedPosts', 'unpublishedPosts'
             ));
         });
-
-
-
-    }
+    }*/
 }

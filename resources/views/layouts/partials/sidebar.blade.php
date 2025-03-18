@@ -4,6 +4,10 @@
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
         Dashboard
     </a>
+    <a class="nav-link" href="{{ route('frontend.home') }}">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-desktop"></i></div>
+        Frontend
+    </a>
     <div class="sb-sidenav-menu-heading">Interface</div>
 
     @can('ViewAdminPanel', App\Models\User::class)

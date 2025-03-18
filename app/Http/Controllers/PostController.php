@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
 use App\Models\Category;
 use App\Models\Photo;
 use App\Models\Post;
@@ -26,7 +27,7 @@ class PostController extends Controller
         $search = request('search');
         $categoryIds = request('category_ids', []);
 
-        $posts = Post::with(['author', 'photo', 'categories'])
+        $posts = Post::with(['author.roles', 'photo', 'categories'])
             ->published()//dit is de scopeIsPublished van in post.php
             ->filter($search)
             ->inCategories($categoryIds)
@@ -74,6 +75,10 @@ class PostController extends Controller
         }
         $post = Post::create($validated);
         $post->categories()->sync($request['categories']);
+
+        //events triggeren
+        PostCreated::dispatch($post);
+
         return redirect()->route('posts.index')->with('message', 'Post created successfully.');
 
     }
@@ -103,6 +108,7 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
         //
+
         $this->authorize('update', $post); //use AuthorizesRequests; moet bovenaan erbij om authorize te doen werken
 
         $validated = $request->validated();

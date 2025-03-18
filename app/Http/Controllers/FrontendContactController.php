@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Category;
+use App\Models\Post;
+use Illuminate\Http\Request;
+
+class FrontendContactController extends Controller
+{
+    //
+    public function index(){
+        $breakingNews = Post::published()
+            ->latest() //sorteer op de nieuwste eerst
+            ->take(6) //haal de laatste 6 op
+            ->with(['author', 'photo', 'categories']) //laad de auteur, foto en categories op
+            ->get();
+
+        $categories = Category::whereHas('posts')->get(); //haal alle categorieën op die een post hebben
+
+        return view('frontend.contact', compact('breakingNews', 'categories'));
+    }
+}

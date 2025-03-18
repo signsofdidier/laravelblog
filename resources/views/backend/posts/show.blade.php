@@ -52,10 +52,10 @@
             <a href="{{ route('posts.index') }}" class="btn btn-secondary">Terug naar overzicht</a>
             <div>
                 @can('update', $post)
-                    <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-info">Bewerk</a>
+                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-info">Bewerk</a>
                 @endcan
                 @can('delete', $post)
-                    <form method="POST" action="{{ route('posts.destroy', $post->id) }}" class="d-inline">
+                    <form method="POST" action="{{ route('posts.destroy', $post) }}" class="d-inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Weet je zeker dat je deze post wilt verwijderen?')">

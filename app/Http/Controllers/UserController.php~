@@ -30,7 +30,7 @@ class UserController extends Controller
         $search = request('search'); // Zoekterm ophalen uit de request
 
         //de homepagina van mijn users
-        $users = User::withTrashed()->with(['roles', 'photo', 'role_id'])
+        $users = User::withTrashed()->with(['roles:id,name', 'photo'])
             ->filter($search)
             ->sortable() // Voeg deze regel toe voor sorteerfunctionaliteit
             ->orderBy('id', 'desc')
