@@ -9,7 +9,7 @@
                         <div class="gazette-post-tag">
                             <a href="#">{{ $category->name }}</a>
                         </div>
-                        <h2 class="font-pt">{{ Str::limit($post->title, 20, '...') }}</h2>
+                        <h2 class="font-pt">{{ Str::limit($post->title, 25, '...') }}</h2>
                         <p class="gazette-post-date">{{ $post->created_at->format('M d, Y') }}</p>
                         <!-- Post Thumbnail -->
                         <div class="blog-post-thumbnail my-5">

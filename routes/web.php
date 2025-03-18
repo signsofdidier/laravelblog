@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FrontendContactController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FrontendCategoryController;
+use App\Http\Controllers\FrontendPostController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -21,10 +22,10 @@ Route::get('/', function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
-Route::get('/about-us', [AboutUsController::class, 'index'])->name('frontend.about-us');
-Route::get('/single-post', [SinglePostController::class, 'index'])->name('frontend.single-post');
-Route::get('/category', [FrontendCategoryController::class, 'index'])->name('frontend.category');
-Route::get('/contact', [FrontendContactController::class, 'index'])->name('frontend.contact');
+/*Route::get('/about-us', [AboutUsController::class, 'index'])->name('frontend.about-us');*/
+Route::get('/posts/{post:slug}', [FrontendPostController::class, 'show'])->name('frontend.post.show');
+Route::get('/categories/{category:name}', [FrontendCategoryController::class, 'show'])->name('frontend.category.show');
+/*Route::get('/contact', [FronstendContactController::class, 'index'])->name('frontend.contact');*/
 
 
 // Route voor het contactformulier

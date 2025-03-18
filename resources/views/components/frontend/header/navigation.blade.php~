@@ -39,7 +39,7 @@
 
                             <div class="mr-3">
                                 @can('ViewAdminPanel', App\Models\User::class)
-                                    <a href="{{ route('backend.index') }}">Admin Dashboard</a>
+                                    <a href="{{ route('backend.index') }}">Dashboard</a>
                                 @endcan
                             </div>
 

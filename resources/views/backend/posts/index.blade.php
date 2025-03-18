@@ -14,6 +14,7 @@
         <h1 class="h3">Posts Beheer</h1>
         @can('create', App\Models\Post::class)
             <a href="{{ route('posts.create') }}" class="btn btn-primary">Nieuwe Post</a>
+
         @endcan
     </div>
 

@@ -2,11 +2,12 @@
     <div class="simple-marquee-container">
         <div class="marquee">
             <ul class="marquee-content-items">
-                @foreach ($brNews as $item)
+                @foreach($brNews as $item)
                     <li>
-                        <a target="_blank" href="{{ $item['url'] }}"><span class="latest-news-time">{{ $item['publishedAt'] ?? 'Onbekend' }}</span> {{ $item['title'] }}</a>
+                        <a href="#"><span class="latest-news-time">10:40</span> The Facebook Live stream that could presage TV</a>
                     </li>
                 @endforeach
+
             </ul>
         </div>
     </div>

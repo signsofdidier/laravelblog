@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'alphavantage' => [
+        'key' => env('ALPHAVANTAGE_KEY'),
+    ],
+
+    'newsapi' => [
+        'key' => env('NEWS_API_KEY'),
+    ],
+
 ];

@@ -7,7 +7,7 @@
                     <div class="gazette-post-tag">
                         <a href="#">{{ $category->name }}</a>
                     </div>
-                    <p class="editorial-post-date text-dark mb-0">{{ $category->created_at->format('M d, Y') }}</p>
+                    <p class="editorial-post-date text-dark mb-0">March 29, 2016</p>
                 </div>
             </div>
         </div>

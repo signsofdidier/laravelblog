@@ -1,4 +1,4 @@
-<x-frontend.layout title="Contact - The Gazette" :breakingNews="$breakingNews" :categories="$categories">
+<x-frontend.layout title="Contact - The Gazette" >
 
     <x-frontend.content.contact.breadcrumb-area />
     <x-frontend.content.contact.contact-area />

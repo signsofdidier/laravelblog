@@ -62,7 +62,12 @@ class Post extends Model
     }
     //scope:: alleen gepubliceerde posts
     public function scopePublished($query){
-        return $query->where('is_published', 1);
+        return $query->where('is_published', true)
+            ->with([
+                'author:id,name',
+                'photo:id,path',
+                'categories:id,name'
+            ]); //Dit laad enkel de id in de naam en het pad ipv alle veldjes, eager loading verzorgen
     }
 
     //scope: filter op posts op basis van categorieën (polymorfe relatie)

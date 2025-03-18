@@ -16,10 +16,10 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" href="{{ route('frontend.home') }}">Home</a>
-                                        <a class="dropdown-item" href="{{ route('frontend.category') }}">Category</a>
+                                        {{--<a class="dropdown-item" href="{{ route('frontend.category') }}">Category</a>
                                         <a class="dropdown-item" href="{{ route('frontend.single-post') }}">Single Post</a>
                                         <a class="dropdown-item" href="{{ route('frontend.about-us') }}">About Us</a>
-                                        <a class="dropdown-item" href="{{ route('frontend.contact') }}">Contact</a>
+                                        <a class="dropdown-item" href="{{ route('frontend.contact') }}">Contact</a>--}}
                                     </div>
                                 </li>
                                 {{--Dynamische categorieën--}}

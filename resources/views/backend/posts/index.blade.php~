@@ -106,9 +106,7 @@
                     <th>@sortablelink('author.name', 'Auteur')</th>
                     <th>Gepubliceerd</th>
                     <th>Categorieën</th>
-                    <th>
-                        @sortablelink('created_at', 'Aangemaakt')
-                    </th>
+                    <th>@sortablelink('created_at', 'Aangemaakt')</th>
                     <th>@sortablelink('updated_at', 'Bewerkt')</th>
                     <th>Acties</th>
                 </tr>
@@ -121,9 +119,7 @@
                     <th>@sortablelink('author.name', 'Auteur')</th>
                     <th>Gepubliceerd</th>
                     <th>Categorieën</th>
-                    <th>
-                        @sortablelink('created_at', 'Aangemaakt')
-                    </th>
+                    <th>@sortablelink('created_at', 'Aangemaakt')</th>
                     <th>@sortablelink('updated_at', 'Bewerkt')</th>
                     <th>Acties</th>
                 </tr>

@@ -24,7 +24,7 @@
 
 <body>
 <!-- Header Area Start -->
-<x-frontend.header.index :breakingNews="$breakingNews" :categories="$categories" />
+<x-frontend.header.index />
 <!-- Header Area End -->
 
 {{ $slot }}

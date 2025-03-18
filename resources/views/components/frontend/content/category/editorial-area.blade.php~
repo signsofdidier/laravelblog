@@ -21,8 +21,8 @@
                                     <div class="editorial-post-content">
                                         <!-- Post Tag -->
                                         <div class="gazette-post-tag">
-                                            @foreach($post->categories as $postCategory)
-                                                <a href="#">{{ $postCategory->name }}</a>
+                                            @foreach($post->categories as $postCategories)
+                                                <a href="#">{{ $postCategories->category->name }}</a>
                                             @endforeach
                                         </div>
                                         <h2><a href="#" class="font-pt mb-15">{{ $post->title }}</a></h2>
