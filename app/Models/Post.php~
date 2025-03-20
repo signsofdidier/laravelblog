@@ -49,8 +49,9 @@ class Post extends Model
         return $this->morphToMany(Category::class, 'categoryable');
     }
 
-    public function comments(){
-        return $this->hasMany(PostComment::class);
+    public function comments()
+    {
+        return $this->hasMany(PostComment::class, 'post_id')->whereNotNull('post_id');
     }
 
     /* Filters (scopes) */

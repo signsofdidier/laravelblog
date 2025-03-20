@@ -1,2 +1,5 @@
-<x-frontend.content.post.single-post-area :post="$post"/>
-<x-frontend.content.post.discussion-area/>
+<x-frontend.content.post.single-post-area :post="$post" />
+<x-frontend.content.post.post-discussion-area :post="$post" />
+
+<!-- Voeg dit toe aan je hoofd-layout of specifieke view -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>

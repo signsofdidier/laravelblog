@@ -1,6 +1,6 @@
 <section class="single-post-area">
     <!-- Single Post Title -->
-    <div class="single-post-title bg-img background-overlay" style="background-image: url({{ asset('assets/img/' . $post->photo->path) }});">
+    <div class="single-post-title bg-img background-overlay" style="background-image: url(#);">
         <div class="container h-100">
             <div class="row h-100 align-items-end">
                 <div class="col-12">
@@ -27,7 +27,7 @@
                         <p>{{ $post->content }}</p>
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-12 mb-5">
                     <div class="single-post-thumb">
                         <img style="height:600px; width:100%; object-fit:cover" class="d-block" src="{{ asset('assets/img/' . $post->photo->path) }}" alt="">
                     </div>
@@ -37,3 +37,4 @@
         </div>
     </div>
 </section>
+

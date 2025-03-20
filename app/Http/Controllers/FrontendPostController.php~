@@ -9,6 +9,7 @@ class FrontendPostController extends Controller
 {
     //
     public function show(Post $post){
-        return view('frontend.post');
+        $post->load(['comments.parent', 'comments.children','comments.user']);
+        return view('frontend.post', compact('post'));
     }
 }

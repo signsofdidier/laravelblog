@@ -27,7 +27,7 @@ class PostController extends Controller
         $search = request('search');
         $categoryIds = request('category_ids', []);
 
-        $posts = Post::with(['author.roles', 'photo', 'categories'])
+        $posts = Post::with(['author.roles', 'photo', 'categories', 'user'])
             ->published()//dit is de scopeIsPublished van in post.php
             ->filter($search)
             ->inCategories($categoryIds)
@@ -41,7 +41,7 @@ class PostController extends Controller
 
         /*$posts = Post::with(['author', 'photo', 'categories'])->latest()->paginate(5);
         return view('backend.posts.index', compact('posts'));*/
-        return view()
+
     }
 
     /**

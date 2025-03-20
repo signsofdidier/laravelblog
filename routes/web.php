@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FrontendCategoryController;
 use App\Http\Controllers\FrontendPostController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SinglePostController;
@@ -29,15 +30,20 @@ Route::get('/categories/{category:name}', [FrontendCategoryController::class, 's
 
 
 // Route voor het contactformulier
-/*Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');*/
+Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Route voor de comments formulier
+Route::get('/posts/{postId}', [PostCommentController::class, 'show'])->name('posts.show');
+Route::post('/comments', [PostCommentController::class, 'store'])->name('comments.store');
+
 
 
 
 //Backend routes
 
 Route::group(['prefix' => 'backend', 'middleware' => ['auth', 'admin', 'verified']], function(){
-    Route::resource('/users', UserController::class); //geeft toegang tot alle 7 functies in UserController
+    Route::resource('/users', UserController::class);
     Route::patch('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::resource('/categories', CategoryController::class);
     Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
