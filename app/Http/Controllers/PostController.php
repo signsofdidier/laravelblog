@@ -8,6 +8,7 @@ use App\Models\Photo;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Services\ExportService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -17,6 +18,22 @@ class PostController extends Controller
 
     //moet erbij om authorize te doen werken voor de policies
     use AuthorizesRequests;
+    protected ExportService $exportService; //object variable
+
+    public function __construct(exportService $exportService){
+        $this->exportService = $exportService;
+    }
+    public function exportAll($format){
+        $posts = Post::all();
+        $headers = ['id', 'title', 'author', 'published', 'created_at', 'updated_at'];
+        return $this->exportService->export($format, $posts, $headers, 'posts');
+    }
+    public function exportOnePost($format, $id)
+    {
+        $post = Post::where('id', $id)->get();
+        $headers = ['id', 'title', 'author', 'published', 'created_at', 'updated_at'];
+        return $this->exportService->export($format, $post, $headers, 'post');
+    }
 
     /**
      * Display a listing of the resource.

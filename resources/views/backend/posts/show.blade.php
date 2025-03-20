@@ -6,6 +6,9 @@
 @endsection
 @section('content')
     <h1 class="h3 mb-4">Post Details</h1>
+    <div class="d-flex gap-2 mb-3">
+        <a href="{{ route('post.export', ['pdf', $post->id]) }}" class="btn btn-sm btn-danger">Export PDF</a>
+    </div>
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">{{ $post->title }}</h5>
